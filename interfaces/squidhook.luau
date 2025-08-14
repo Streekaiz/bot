@@ -43,6 +43,7 @@ local Library = {
     Blur = nil 
 }; Library.__index = Library 
 
+local Options = {}
 local MiscOptions = {
 	["Enabled"] = false;
 	["Render Distance"] = 10000; 
@@ -6184,7 +6185,7 @@ local Esp = {
 	Esp.Loop = RunService:BindToRenderStep("Run Loop", 400, Esp.Update)
 end
 
-local Options = setmetatable({}, {
+Options = setmetatable({}, {
     __index = MiscOptions, 
     __newindex = function(self, key, value) 
         MiscOptions[key] = value 
