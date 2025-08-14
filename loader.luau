@@ -1,6 +1,7 @@
 local Environment = getgenv() or _G
 local Author = "Streekaiz"
-local Repository = "Squidhook"
+local Repository = "bot"
+local EnvName = "Squidhook"
 local LoadTick = tick()
 
 local LoadedDependencies, Dependencies = {}, {
@@ -16,15 +17,20 @@ local LoadedDependencies, Dependencies = {}, {
 for Index, Dependency in next, Dependencies do 
     local Success = false 
     local Source
-
+	setclipboard(string.format(
+                    'https://raw.githubusercontent.com/%s/%s/refs/heads/main/dependencies/%s.luau', 
+                    Author,
+                    Repository,
+                    string.lower(Dependency)
+                ))
     Success, Source = pcall(function(...)
         return loadstring(
             game:HttpGet(
                 string.format(
-                    'https://raw.githubusercontent.com/%s/%s/main/dependencies/%s.luau', 
+                    'https://raw.githubusercontent.com/%s/%s/refs/heads/master/dependencies/%s.luau', 
                     Author,
                     Repository,
-                    Dependency
+                    string.lower(Dependency)
                 )
             ), Dependency 
         )
@@ -38,6 +44,8 @@ for Index, Dependency in next, Dependencies do
                 Source
             )
         )
+
+		continue
     end 
 
     LoadedDependencies[Dependency] = Source()
@@ -46,11 +54,19 @@ for Index, Dependency in next, Dependencies do
     LoadTick = NewTick 
 end
 
-Environment[Repository] = {}
-Environment[Repository].Dependencies = LoadedDependencies 
-
-Environment[Repository]:GetInterface = function(Name : string)
-
+Environment[EnvName] = {}
+Environment[EnvName].Dependencies = LoadedDependencies 
+Environment[EnvName].GetInterface = function(self, Name)
+    return loadstring(
+        game:HttpGet(
+            string.format(
+                'https://raw.githubusercontent.com/%s/%s/refs/heads/master/interfaces/%s.luau', 
+                Author,
+                Repository,
+                string.lower(Name)
+            )
+        ), Name
+    )
 end 
 
 return Environment[Repository]

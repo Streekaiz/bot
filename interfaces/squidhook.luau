@@ -8256,3 +8256,10 @@ function Library:EspTab(properties)
 
 	return Cfg
 end
+
+return {
+	Library = Library,
+	Esp = Esp,
+	MiscOptions = MiscOptions,
+	Options = Options
+}
