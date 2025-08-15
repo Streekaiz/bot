@@ -909,7 +909,7 @@ function Library:Window(properties)
 		Fps = 0;
 	}, Library)
 
-	Library.Items = Library:Create( "ScreenGui" , {
+	Library.ItemsUI = Library:Create( "ScreenGui" , {
 		Parent = CoreGui;
 		Name = "\0";
 		Enabled = true;
@@ -1281,7 +1281,7 @@ function Library:Panel(properties)
 		Items.Button = Library:Create( "TextButton" , {
 			Active = false;
 			BorderColor3 = Color3.fromRGB(0, 0, 0);
-			Parent = self.Items.WindowButtonHolder;
+			Parent = self.ItemsUI.WindowButtonHolder;
 			Name = "\0";
 			Selectable = false;
 			Size = UDim2.new(0, 0, 0, 16);
