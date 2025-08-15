@@ -4814,7 +4814,7 @@ function Library:Notification(properties)
 		});
 	end     
 
-	function Cfg.Destroy() 
+	function Cfg.DestroyNotification() 
 		local Tween = Library:Tween(Items.Holder, {AnchorPoint = Vector2.new(1, 0)}, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut, 0, false, 0))
 		Library:FadeNotification(Items.Holder, true)
 
@@ -4839,7 +4839,7 @@ function Library:Notification(properties)
 	if Cfg.Lifetime then 
 		task.spawn(function() 
 			task.wait(Cfg.Lifetime)
-			Cfg.Destroy()
+			Cfg.DestroyNotification()
 		end)            
 	end 
 
