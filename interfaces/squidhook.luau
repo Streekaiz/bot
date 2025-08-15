@@ -1,6 +1,6 @@
 local cloneref = cloneref or function(...) return ... end 
 
-local InputService, HttpService, GuiService, RunService, Stats, CoreGui, TweenService, SoundService, Workspace, Players, Lighting = 
+local InputService, HttpService, GuiService, RunService, Stats, CoreGui, TweenService, Workspace, Players, Lighting = 
     cloneref(game:GetService("UserInputService")), 
     cloneref(game:GetService("HttpService")), 
     cloneref(game:GetService("GuiService")), 
@@ -8,7 +8,6 @@ local InputService, HttpService, GuiService, RunService, Stats, CoreGui, TweenSe
     cloneref(game:GetService("Stats")), 
     cloneref(game:GetService("CoreGui")), 
     cloneref(game:GetService("TweenService")), 
-    cloneref(game:GetService("SoundService")), 
     cloneref(game:GetService("Workspace")), 
     cloneref(game:GetService("Players")), 
     cloneref(game:GetService("Lighting"))
@@ -86,11 +85,29 @@ local MiscOptions = {
 	["Name_Text_Font"] = "ProggyClean";
 	["Name_Text_Size"] = 12;
 
+    ["Display_Text"] = false; 
+	["Display_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
+	["Display_Text_Position"] = "Top";
+	["Display_Text_Font"] = "ProggyClean";
+	["Display_Text_Size"] = 12;
+
 	["Distance_Text"] = false; 
 	["Distance_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
 	["Distance_Text_Position"] = "Bottom";
 	["Distance_Text_Font"] = "ProggyClean";
 	["Distance_Text_Size"] = 12;
+
+    ["Velocity_Text"] = false; 
+	["Velocity_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
+	["Velocity_Text_Position"] = "Bottom";
+	["Velocity_Text_Font"] = "ProggyClean";
+	["Velocity_Text_Size"] = 12;
+
+	["Weapon_Text"] = false; 
+	["Weapon_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
+	["Weapon_Text_Position"] = "Bottom";
+	["Weapon_Text_Font"] = "ProggyClean";
+	["Weapon_Text_Size"] = 12;
 };  
 
 local Themes = {
@@ -247,6 +264,22 @@ function Library:Lerp(start, finish, t)
     t = t or 1 / 8
 
     return start * (1 - t) + finish * t
+end
+
+function Library:UpdateConfigList() 
+    local CfgHolder = Library.ConfigList or nil 
+	if not CfgHolder then 
+		return 
+	end 
+            
+    local List = {}
+            
+    for _,file in listfiles(Library.Directory .. "/configs") do
+        local Name = file:gsub(Library.Directory .. "/configs\\", ""):gsub(".cfg", ""):gsub(Library.Directory .. "\\configs\\", "")
+        List[#List + 1] = Name
+    end
+
+    CfgHolder.RefreshOptions(List)
 end
 
 function Library:ConvertEnum(enum)
@@ -2535,7 +2568,7 @@ function Library:Tooltip(properties)
 	Library:Connection(InputService.InputChanged, function(input)
 		if Items.Tooltip.Visible and input.UserInputType == Enum.UserInputType.MouseMovement and Library:Hovering(Items.Tooltip) then 
 			Library:Tween(Items.Outline, {
-				Position = UDim2.fromOffset(input.Position.X, input.Position.Y + 86)
+				Position = UDim2.fromOffset(input.Position.X, input.Position.Y + 70)
 			}, TweenInfo.new(Library.DraggingSpeed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, false, 0))
 		end
 
@@ -5553,6 +5586,26 @@ local Esp = {
 				LineJoinMode = Enum.LineJoinMode.Miter
 			});
 
+			Items.Display = Esp:Create( "TextLabel", {
+				FontFace = Fonts.ProggyClean;
+				TextColor3 = Color3.fromRGB(255, 255, 255);
+				BorderColor3 = Color3.fromRGB(0, 0, 0);
+				Parent = Esp.Cache;
+				Name = "Left";
+				Text = player.DisplayName;
+				BackgroundTransparency = 1;
+				Size = UDim2.new(1, 0, 0, 0);
+				BorderSizePixel = 0;
+				AutomaticSize = Enum.AutomaticSize.XY;
+				TextSize = 12;
+				BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			});
+
+			Esp:Create( "UIStroke", {
+				Parent = Items.Display;
+				LineJoinMode = Enum.LineJoinMode.Miter
+			});
+
 			Items.Distance = Esp:Create( "TextLabel", {
 				FontFace = Fonts.ProggyClean;
 				TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -5569,6 +5622,44 @@ local Esp = {
 
 			Esp:Create( "UIStroke", {
 				Parent = Items.Distance;
+				LineJoinMode = Enum.LineJoinMode.Miter
+			});
+
+			Items.Velocity = Esp:Create( "TextLabel", {
+				FontFace = Fonts.ProggyClean;
+				TextColor3 = Color3.fromRGB(255, 255, 255);
+				BorderColor3 = Color3.fromRGB(0, 0, 0);
+				Parent = Esp.Cache;
+				Name = "Left";
+				BackgroundTransparency = 1;
+				Size = UDim2.new(1, 0, 0, 0);
+				BorderSizePixel = 0;
+				AutomaticSize = Enum.AutomaticSize.XY;
+				TextSize = 12;
+				BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			});
+
+			Esp:Create( "UIStroke", {
+				Parent = Items.Velocity;
+				LineJoinMode = Enum.LineJoinMode.Miter
+			});
+
+			Items.Weapon = Esp:Create( "TextLabel", {
+				FontFace = Fonts.ProggyClean;
+				TextColor3 = Color3.fromRGB(255, 255, 255);
+				BorderColor3 = Color3.fromRGB(0, 0, 0);
+				Parent = Esp.Cache;
+				Name = "Left";
+				BackgroundTransparency = 1;
+				Size = UDim2.new(1, 0, 0, 0);
+				BorderSizePixel = 0;
+				AutomaticSize = Enum.AutomaticSize.XY;
+				TextSize = 12;
+				BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			});
+
+			Esp:Create( "UIStroke", {
+				Parent = Items.Weapon;
 				LineJoinMode = Enum.LineJoinMode.Miter
 			});
 			-- 
@@ -5597,18 +5688,13 @@ local Esp = {
 		end   
 
 		Data.ToolAdded = function(item)
-			-- if not item:FindFirstChild("ItemRoot") then 
-			--     return 
-			-- end 
+			if not item:FindFirstChild("ItemRoot") then 
+				return 
+			end 
 
-			-- local exists = Data.Info.Character:FindFirstChild(item.Name) 
-			-- Items["weapon"].Text = "[" .. item.Name .. "]"
-
-			-- pcall(function()
-			--     Items["weapon"].Parent = exists and Items["Holder"] or Esp.Cache
-			-- end)
-
-			-- Refresh
+			local exists = Data.Info.Character:FindFirstChild(item.Name) 
+			Items["Weapon"].Text = "[" .. item.Name .. "]"
+			Items["Weapon"].Parent = exists and Items["Holder"] or Esp.Cache
 		end
 
 		Data.HealthChanged = function(Value)
@@ -5876,6 +5962,17 @@ local Esp = {
 				DistanceLabel.Text = Text
 			end 
 
+            local Tool = Character:FindFirstChildWhichIsA("Tool")
+            if Tool and Items.Weapon.Text ~= Tool.Name then 
+                Items.Weapon.Text = Tool.Name
+            else 
+                Items.Weapon.Text = "None"
+            end
+
+			local Velocity = tostring(Humanoid.RootPart.Velocity)
+			if Items.Velocity.Text ~= Velocity then
+				Items.Velocity.Text = Velocity
+			end 
 			-- if Options["Box Fill"] and Options["Box Spin"] then 
 			--     Items["Holder_gradient"].Rotation += Options["Box Spin Speed"] / 100
 			-- end
@@ -6090,9 +6187,18 @@ local Esp = {
 			if string.match(key, "Name") then 
 				Text = Items.Text
 				Match = "Name"
+			elseif string.match(key, "Display") then 
+				Text = Items.Display
+				Match = "Display"
 			elseif string.match(key, "Distance") then 
 				Text = Items.Distance
 				Match = "Distance"
+            elseif string.match(key, "Velocity") then 
+				Text = Items.Velocity
+				Match = "Velocity"
+			elseif string.match(key, "Weapon") then 
+				Text = Items.Weapon
+				Match = "Weapon"
 			end 
 
 			if Text then 
@@ -8243,7 +8349,6 @@ function Library:EspTab(properties)
 	if Cfg.Chams then 
 		local Toggle = self.Section:Toggle({Name = Cfg.Name .. " Chams", Callback = function(bool)
 			Options["ChamsEnabled"] = bool
-			print("I am real", bool)
 		end, Flag = Cfg.Name .. "_CHAMS"})
 
 		Toggle:Colorpicker({Name = "Fill", Color = Color3.fromRGB(255, 255, 255), Transparency = 1, Callback = function(color, alpha)
@@ -8256,11 +8361,13 @@ function Library:EspTab(properties)
 	end
 
 	return Cfg
-end
+end 
 
 return {
 	Library = Library,
-	Esp = Esp,
 	MiscOptions = MiscOptions,
-	Options = Options
+	Options = Options,
+	Esp = Esp,
+	Themes = Themes,
+	Fonts = Fonts
 }

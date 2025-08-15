@@ -1,72 +1,92 @@
-local Environment = getgenv() or _G
-local Author = "Streekaiz"
-local Repository = "bot"
-local EnvName = "Squidhook"
-local LoadTick = tick()
+local Environment : {[any] : any} = getgenv() or _G; do 
+    local Author : string = "Streekaiz"
+    local Repository : string = "bot"
+    local Timer : number = tick()
 
-local LoadedDependencies, Dependencies = {}, {
-    "Clients",
-    "Instances",
-    "Miscallaenous",
-    "Services",
-    "Signals",
-    "String",
-    "Tween"
-}
-
-for Index, Dependency in next, Dependencies do 
-    local Success = false 
-    local Source
-	setclipboard(string.format(
-                    'https://raw.githubusercontent.com/%s/%s/refs/heads/main/dependencies/%s.luau', 
-                    Author,
-                    Repository,
-                    string.lower(Dependency)
-                ))
-    Success, Source = pcall(function(...)
-        return loadstring(
-            game:HttpGet(
-                string.format(
-                    'https://raw.githubusercontent.com/%s/%s/refs/heads/master/dependencies/%s.luau', 
-                    Author,
-                    Repository,
-                    string.lower(Dependency)
-                )
-            ), Dependency 
-        )
-    end)
-
-    if not Success then 
-        warn(
-            string.format(
-                "failed to load dependency: %s, error: %s, ignoring error; loading other dependencies",
-                Dependency,
-                Source
+    local Squidhook : {[any] : any} = {Dependencies = {}}; do 
+        Squidhook.LoadInterface = function(self, Interface : string)
+            return loadstring(
+                game:HttpGet(
+                    string.format(
+                        'https://raw.githubusercontent.com/%s/%s/refs/heads/master/interfaces/%s.luau', 
+                        Author,
+                        Repository,
+                        string.lower(Interface)
+                    )
+                ), Interface
             )
-        )
+        end
 
-		continue
+        local Interface : {[any] : any} = Squidhook:LoadInterface("octohook")()
+        local Window : {[any] : any} = Interface.Library:Window({
+            Name = "squidhook"
+        })
+
+        Interface.Library:Notification({
+            Lifetime = 5,
+            Name = string.format(
+                "Loaded interface in %s milliseconds",
+                tostring(tick() - Timer)
+            )
+        })
+
+        Squidhook.Interface = Interface 
+        Squidhook.Window = Window 
+
+        Timer = tick()
     end 
 
-    LoadedDependencies[Dependency] = Source()
-    local NewTick = tick()
-    warn("loaded dependency in " .. NewTick - LoadTick)
-    LoadTick = NewTick 
-end
+    for Index, Dependency in pairs({
+        "Clients",
+        "Instances",
+        "Miscallaenous",
+        "Services",
+        "Signals",
+        "String",
+        "Tween"
+    }) do 
+        local Success : boolean = false 
+        local Content : (any) = ""
 
-Environment[EnvName] = {}
-Environment[EnvName].Dependencies = LoadedDependencies 
-Environment[EnvName].GetInterface = function(self, Name)
-    return loadstring(
-        game:HttpGet(
-            string.format(
-                'https://raw.githubusercontent.com/%s/%s/refs/heads/master/interfaces/%s.luau', 
-                Author,
-                Repository,
-                string.lower(Name)
+        Success, Content = pcall(function(... : any)
+            return loadstring(
+                game:HttpGet(
+                    string.format(
+                        'https://raw.githubusercontent.com/%s/%s/refs/heads/master/dependencies/%s.luau', 
+                        Author,
+                        Repository,
+                        string.lower(Dependency)
+                    )
+                )
             )
-        ), Name
-    )
-end 
+        end)
 
-return Environment[Repository]
+        if not Success then 
+            Squidhook.Interface.Library:Notification({
+                Name = string.format(
+                    "Failed to load dependency: %s, error message: %s",
+                    Dependency,
+                    tostring(Content)
+                )
+            })
+            continue 
+        end
+
+        Squidhook.Dependencies[Dependency] = Content()
+
+        local NewTimer = tick()
+
+        Squidhook.Interface.Library:Notification({
+            Lifetime = 5,
+            Name = string.format(
+                "Successfully loaded dependency: %s in %s milliseconds",
+                Dependency,
+                tostring(NewTimer - Timer)
+            )
+        })
+
+        Timer = NewTimer 
+    end
+
+    Environment.Squidhook = Squidhook 
+end
