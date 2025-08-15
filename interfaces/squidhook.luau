@@ -4839,7 +4839,7 @@ function Library:Notification(properties)
 	if Cfg.Lifetime then 
 		task.spawn(function() 
 			task.wait(Cfg.Lifetime)
-			Cfg.DestroyNotif()
+			Cfg.Destroy()
 		end)            
 	end 
 
