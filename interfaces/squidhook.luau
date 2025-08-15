@@ -103,6 +103,12 @@ local MiscOptions = {
 	["Velocity_Text_Font"] = "ProggyClean";
 	["Velocity_Text_Size"] = 12;
 
+	["Position_Text"] = false; 
+	["Position_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
+	["Position_Text_Position"] = "Bottom";
+	["Position_Text_Font"] = "ProggyClean";
+	["Position_Text_Size"] = 12;
+
 	["Weapon_Text"] = false; 
 	["Weapon_Text_Color"] = { Color = Color3.fromRGB(255, 255, 255) };
 	["Weapon_Text_Position"] = "Bottom";
@@ -115,7 +121,8 @@ local Themes = {
         Inline = Color3.fromRGB(46, 46, 46),
         Outline = Color3.fromRGB(10, 10, 15),
         Accent = Color3.fromRGB(19, 128, 225),
-        Background = Color3.fromRGB(20, 20, 25),              
+        Background = Color3.fromRGB(20, 20, 25),     
+		SecondaryBackground = Color3.fromRGB(15, 15, 20),         
         Misc = Color3.fromRGB(30, 30, 35),
         TextColor = Color3.fromRGB(245, 245, 245),
         Unselected = Color3.fromRGB(145, 145, 145),
@@ -909,7 +916,7 @@ function Library:Window(properties)
 		Fps = 0;
 	}, Library)
 
-	Library.ItemsUI = Library:Create( "ScreenGui" , {
+	Library.Items = Library:Create( "ScreenGui" , {
 		Parent = CoreGui;
 		Name = "\0";
 		Enabled = true;
@@ -1129,7 +1136,7 @@ function Library:Window(properties)
 			BorderSizePixel = 0;
 			AutomaticSize = Enum.AutomaticSize.XY;
 			BackgroundColor3 = Color3.fromRGB(28, 28, 33)
-		});
+		}); Library:Themify(Items.Background, "Background", "BackgroundColor3")
 
 		Items.Text = Library:Create( "TextLabel" , {
 			RichText = true;
@@ -1281,7 +1288,7 @@ function Library:Panel(properties)
 		Items.Button = Library:Create( "TextButton" , {
 			Active = false;
 			BorderColor3 = Color3.fromRGB(0, 0, 0);
-			Parent = self.ItemsUI.WindowButtonHolder;
+			Parent = self.Items.WindowButtonHolder;
 			Name = "\0";
 			Selectable = false;
 			Size = UDim2.new(0, 0, 0, 16);
@@ -1452,7 +1459,7 @@ function Library:Panel(properties)
 			Size = UDim2.new(1, -2, 1, -2);
 			BorderSizePixel = 0;
 			BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-		});
+		}); Library:Themify(Items.BackgroundSecond, "SecondaryBackground", "BackgroundColor3")
 
 		Items.Accent = Library:Create( "Frame" , {
 			Parent = Items.BackgroundSecond;
@@ -1521,7 +1528,8 @@ function Library:Panel(properties)
 			Size = UDim2.new(1, -2, 1, -2);
 			BorderSizePixel = 0;
 			BackgroundColor3 = Color3.fromRGB(28, 28, 33)
-		});
+		}); Library:Themify(Items.PageHolder, "Background", "BackgroundColor3")
+
 
 		Items.Title = Library:Create( "TextLabel" , {
 			FontFace = Fonts[Themes.Preset.Font];
@@ -1537,7 +1545,8 @@ function Library:Panel(properties)
 			ZIndex = 2;
 			TextSize = 12;
 			BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		});
+		}); Library:Themify(Items.Title, "TextColor3", "TextColor3")
+
 
 		Library:Create( "UIStroke" , {
 			Parent = Items.Title;
@@ -4789,7 +4798,7 @@ function Library:Notification(properties)
 			ZIndex = 3;
 			TextSize = 12;
 			BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		});
+		}); 
 
 		Library:Create( "UIStroke" , {
 			Parent = Items.Title;
@@ -5644,6 +5653,25 @@ local Esp = {
 				LineJoinMode = Enum.LineJoinMode.Miter
 			});
 
+			Items.Position = Esp:Create( "TextLabel", {
+				FontFace = Fonts.ProggyClean;
+				TextColor3 = Color3.fromRGB(255, 255, 255);
+				BorderColor3 = Color3.fromRGB(0, 0, 0);
+				Parent = Esp.Cache;
+				Name = "Left";
+				BackgroundTransparency = 1;
+				Size = UDim2.new(1, 0, 0, 0);
+				BorderSizePixel = 0;
+				AutomaticSize = Enum.AutomaticSize.XY;
+				TextSize = 12;
+				BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			});
+
+			Esp:Create( "UIStroke", {
+				Parent = Items.Position;
+				LineJoinMode = Enum.LineJoinMode.Miter
+			});
+
 			Items.Weapon = Esp:Create( "TextLabel", {
 				FontFace = Fonts.ProggyClean;
 				TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -5973,6 +6001,11 @@ local Esp = {
 			if Items.Velocity.Text ~= Velocity then
 				Items.Velocity.Text = Velocity
 			end 
+
+			local PositionString = tostring(Humanoid.RootPart.Position)
+			if Items.Position.Text ~= PositionString then 
+				Items.Position.Text = PositionString
+			end
 			-- if Options["Box Fill"] and Options["Box Spin"] then 
 			--     Items["Holder_gradient"].Rotation += Options["Box Spin Speed"] / 100
 			-- end
@@ -6196,6 +6229,9 @@ local Esp = {
             elseif string.match(key, "Velocity") then 
 				Text = Items.Velocity
 				Match = "Velocity"
+			elseif string.match(key, "Position") then 
+				Text = Items.Position
+				Match = "Position"
 			elseif string.match(key, "Weapon") then 
 				Text = Items.Weapon
 				Match = "Weapon"
