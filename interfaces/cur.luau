@@ -1545,7 +1545,7 @@ function Library:Panel(properties)
 			ZIndex = 2;
 			TextSize = 12;
 			BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		}); Library:Themify(Items.Title, "TextColor", "TextColor3")
+		}); Library:Themify(Items.Title, "TextColor3", "TextColor3")
 
 
 		Library:Create( "UIStroke" , {
